@@ -7,6 +7,11 @@
 // 전체 탭을 누르면 다시 전체 아이템으로 돌아옴
 
 let taskInput = document.getElementById("task-input");
+
+taskInput.addEventListener("focus", function () {
+  taskInput.value = "";
+});
+
 let addButton = document.getElementById("add-button");
 let tabs = document.querySelectorAll(".task-tabs div");
 let taskList = [];
@@ -21,8 +26,14 @@ for (let i = 1; i < tabs.length; i++) {
   });
 }
 
-console.log(tabs);
 function addTask() {
+  let taskContent = taskInput.value.trim();
+
+  if (taskContent === "") {
+    alert("할 일을 입력해주세요.");
+    return;
+  }
+
   let task = {
     id: randomIDGenerate(),
     taskContent: taskInput.value,
@@ -99,23 +110,22 @@ function filter(event) {
   mode = event.target.id;
   filterList = [];
 
+  moveUnderline(event.target);
+
   if (mode === "all") {
     render();
   } else if (mode === "ongoing") {
-    for (let i = 0; i < taskList.length; i++) {
-      if (taskList[i].isComplete === false) {
-        filterList.push(taskList[i]);
-      }
-    }
-    console.log("진행중", filterList);
+    filterList = taskList.filter((task) => !task.isComplete);
   } else if (mode === "done") {
-    for (let i = 0; i < taskList.length; i++) {
-      if (taskList[i].isComplete === true) {
-        filterList.push(taskList[i]);
-      }
-    }
+    filterList = taskList.filter((task) => task.isComplete);
   }
   render();
+}
+
+function moveUnderline(target) {
+  let underline = document.getElementById("under-line");
+  underline.style.left = target.offsetLeft + "px";
+  underline.style.width = target.offsetWidth + "px";
 }
 
 function randomIDGenerate() {
