@@ -18,6 +18,13 @@ let taskList = [];
 let mode = "all";
 let filterList = [];
 
+// 엔터키로도 작업 추가
+taskInput.addEventListener("keypress", function (event) {
+  if (event.key === "Enter") {
+    addTask();
+  }
+});
+
 addButton.addEventListener("click", addTask);
 
 for (let i = 1; i < tabs.length; i++) {
@@ -40,42 +47,48 @@ function addTask() {
     isComplete: false,
   };
   taskList.push(task);
-  console.log(taskList);
+  taskInput.value = "";
   render();
 }
 
 function render() {
   // 1. 내가 선택한 탭에 따라서
-  let list = [];
+  let list;
   if (mode === "all") {
     list = taskList;
-  } else if (mode === "ongoing" || mode === "done") {
-    list = filterList;
+  } else if (mode === "done") {
+    list = taskList.filter((task) => task.isComplete);
+  } else if (mode === "ongoing") {
+    list = taskList.filter((task) => !task.isComplete);
   }
   // 2. 리스트를 달리 보여준다
   // all taskLIst
   // ongoing, done filterList
   let resultHTML = "";
-  for (let i = 0; i < list.length; i++) {
-    if (list[i].isComplete === true) {
-      resultHTML += `<div class="task">
-                    <div class="task-done">${list[i].taskContent}</div>
-                    <div>
-                        <button onclick="toggleComplete('${list[i].id}')">Check</button>
-                        <button onclick="deleteTask('${list[i].id}')">Delete</button>
-                    </div>
-                </div>`;
-    } else {
-      resultHTML += `<div class="task">
-        <div>${list[i].taskContent}</div>
-        <div>
-            <button onclick="toggleComplete('${list[i].id}')">Check</button>
-            <button onclick="deleteTask('${list[i].id}')">Delete</button>
-        </div>
-    </div>`;
-    }
-  }
 
+  list.forEach((task) => {
+    let iconHTML = task.isComplete
+      ? `<i class="fa-solid fa-check-square check-icon"></i>`
+      : `<i class="fa-regular fa-square check-icon"></i>`;
+    resultHTML += `
+      <div class="task ${task.isComplete ? "task-complete" : ""}" id="${
+      task.id
+    }">
+        <div>${task.taskContent}</div>
+        <div>
+          <button class="icon-btn toggle-btn" onclick="toggleComplete('${
+            task.id
+          }')">
+            ${iconHTML}
+          </button>
+          <button class="icon-btn delete-btn" onclick="deleteTask('${
+            task.id
+          }')">
+            <i class="fa-solid fa-trash delete-icon"></i>
+          </button>
+        </div>
+      </div>`;
+  });
   document.getElementById("task-board").innerHTML = resultHTML;
 }
 
@@ -100,7 +113,7 @@ function deleteTask(id) {
 
   if (mode === "ongoing") {
     filterList = taskList.filter((task) => !task.isComplete);
-  } else if ((mode = "done")) {
+  } else if (mode === "done") {
     filterList = taskList.filter((task) => task.isComplete);
   }
   render();

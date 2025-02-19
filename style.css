@@ -20,8 +20,14 @@ body {
     padding: 2em;
 }
 
+.input-area {
+    display: flex;
+    gap: 0.5em;
+    margin-bottom: 1em;
+}
+
 #add-button {
-    padding: 1px 10px;
+    padding: 0.5em 1em;
 }
 
 .task-area {
@@ -35,9 +41,13 @@ body {
     position: relative;
 }
 
-.task-tabs div {
+.task-tabs .tab {
     padding: 1em;
     cursor: pointer;
+}
+
+.task-tabs .active {
+    font-weight: bold;
 }
 
 #under-line {
@@ -46,8 +56,7 @@ body {
     position: absolute;
     width: 80px;
     left: 0;
-    top: 52px;
-    padding: 0;
+    bottom: 0;
     transition: all 0.3s ease-in-out;
 }
 
@@ -55,8 +64,26 @@ body {
     display: flex;
     justify-content: space-between;
     padding: 1em;
+    border-bottom: 1px solid #ddd;
 }
 
-.task-done {
+.task:last-child {
+    border-bottom: none;
+}
+
+.task.task-complete {
+    background-color: #f0f0f0;
+}
+
+.task.task-complete div:first-child {
     text-decoration: line-through;
+    color: grey;
+}
+
+
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: 0.5em;
 }
